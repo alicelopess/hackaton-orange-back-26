@@ -10,7 +10,7 @@ const getAll = (request, response) => {
 
 //POST - Crie um projeto
 const create = (request, response) => {
-    const {title, tag, link, description, image} = request.body
+    const {title, tag, link, description, image, date} = request.body
     
     var project = {
         id: uuidv4(),
@@ -19,6 +19,7 @@ const create = (request, response) => {
         link,
         description,
         image,
+        date,
     }
 
     projectsModel.create(project)
@@ -26,12 +27,21 @@ const create = (request, response) => {
     return response.status(201).send('Projeto Criado!')
 }
 
+//GET com ID- Liste UM projeto
+const getOne = (request, response) => {
+    const projectId = request.params.id
+
+    const project = projectsModel.getOne(projectId)
+
+    return response.status(200).json(project)
+}
+
 //PUT - Atualize um projeto
 const update = (request, response) => {
 
     const projectId = request.params.id
 
-    const {title, tag, link, description, image} = request.body
+    const {title, tag, link, description, image, date} = request.body
 
     var projectUpdated = {
         id: projectId,
@@ -40,6 +50,7 @@ const update = (request, response) => {
         link,
         description,
         image,
+        date,
     }
     
     projectsModel.update(projectId, projectUpdated)
@@ -60,6 +71,7 @@ const remove = (request, response) => {
 export default {
     getAll,
     create,
+    getOne,
     update,
     remove
 }

@@ -1,4 +1,4 @@
-const projectsDb = ["projeto"]
+const projectsDb = ["Projeto"]
 
 const getAll = () => {
     return projectsDb
@@ -6,6 +6,12 @@ const getAll = () => {
 
 const create = (project) => {
     projectsDb.push(project)
+}
+
+const getOne = (projectId) => {
+    const index = projectsDb.findIndex(project => project.id === projectId)
+
+    return projectsDb[index]
 }
 
 const update = (projectId, projectUpdated) => {
@@ -26,6 +32,7 @@ export default {
     projectsDb,
     getAll,
     create,
+    getOne,
     update,
     remove
 }

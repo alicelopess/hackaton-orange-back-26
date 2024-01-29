@@ -10,6 +10,9 @@ router.get('/projects', projectsController.getAll)
 // POST http://localhost:3333/projects
 router.post('/projects', projectsController.create)
 
+// GET http://localhost:3333/projects/id
+router.get('/projects/:id', projectsController.getOne)
+
 // PUT http://localhost:3333/projects/id
 router.put('/projects/:id', projectsController.update)
 
