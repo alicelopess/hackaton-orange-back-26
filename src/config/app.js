@@ -3,6 +3,7 @@ import router from '../routes/router.js'
 import swaggerUI from 'swagger-ui-express'
 import swaggerJsDoc from 'swagger-jsdoc'
 import cors from 'cors'
+import bodyParser from 'body-parser'
 
 import options from './swagger.js'
 
@@ -10,6 +11,7 @@ const specs = swaggerJsDoc(options)
 
 const app = express()
 
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors()) //habilitando cors na aplicação
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs))
 
