@@ -1,4 +1,4 @@
-const projectsDb = ["Projeto"]
+const projectsDb = []
 
 const getAll = () => {
     return projectsDb

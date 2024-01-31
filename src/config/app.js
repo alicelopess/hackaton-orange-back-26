@@ -2,6 +2,7 @@ import express from 'express'
 import router from '../routes/router.js'
 import swaggerUI from 'swagger-ui-express'
 import swaggerJsDoc from 'swagger-jsdoc'
+import cors from 'cors'
 
 import options from './swagger.js'
 
@@ -9,6 +10,7 @@ const specs = swaggerJsDoc(options)
 
 const app = express()
 
+app.use(cors()) //habilitando cors na aplicação
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs))
 
 app.use(express.json())
