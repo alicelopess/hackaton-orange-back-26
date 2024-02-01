@@ -11,7 +11,6 @@ const specs = swaggerJsDoc(options)
 
 const app = express()
 
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors()) //habilitando cors na aplicação
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs))
 

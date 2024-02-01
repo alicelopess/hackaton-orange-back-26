@@ -1,5 +1,6 @@
 import express from 'express'
 import projectsController from '../controllers/projectsController.js'
+import usersController from '../controllers/usersController.js'
 
 const router = express.Router()
 
@@ -18,5 +19,11 @@ router.put('/projects/:id', projectsController.update)
 
 // DELETE http://localhost:3333/projects/id
 router.delete('/projects/:id', projectsController.remove)
+
+// CREATE
+router.create('/users/:id', usersController.create)
+
+// PUT
+router.update('/users/:id', usersController.update)
 
 export default router
