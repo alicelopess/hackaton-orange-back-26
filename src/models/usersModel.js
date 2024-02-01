@@ -1,16 +1,23 @@
-const userDb = ["Usuário"]
+const usersDb = ["Usuário"]
+
+
+// temporária
+const getAll = (user) => {
+  return usersDb
+}
 
 const create = (user) => {
-  userDb.push(user)
+  usersDb.push(user)
 }
 
 const update = (userId, userUpdated) => {
   const index = userDb.findIndex(user => user.id === userId)
-  userDb[index] = userUpdated
+  usersDb[index] = userUpdated
 }
 
 export default {
   usersDb,
+  getAll,
   create,
-  update,
+  update
 }

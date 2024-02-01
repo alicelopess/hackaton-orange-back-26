@@ -1,6 +1,15 @@
 import usersModel from '../models/usersModel.js'
 import { v4 as uuidv4 } from 'uuid'
 
+
+//GET - Liste todos os usuários
+// temporária
+const getAll = (request, response) => {
+    const users = usersModel.getAll()
+    
+    return response.status(200).json(users)
+}
+
 //POST - Cria um novo usuário
 const create = (request, response) => {
     const {email, password, firstname, lastname, country} = request.body
@@ -13,7 +22,7 @@ const create = (request, response) => {
         country,
     }
     usersModel.create(user)
-    return response.status(201)
+    return response.status(201).send("usuário criado")
 }
 
 //PUT - Atualiza dados de um usuário
@@ -35,4 +44,5 @@ const update = (request, response) => {
 export default {
     create,
     update,
+    getAll
 }

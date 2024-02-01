@@ -141,6 +141,102 @@ const options = {
               }
             }
           }
+        },
+        "/users": {
+          "post": {
+            "summary": "Criar usuário",
+            "description": "Cria um novo usuário",
+            "tags": ["Users"],
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "email": {
+                        "type": "string"
+                      },
+                      "password": {
+                        "type": "string"
+                      },
+                      "firstname": {
+                        "type": "string"
+                      },
+                      "lastname": {
+                        "type": "string"
+                      },
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "203": {
+                "description": "Projeto Atualizado!",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                    }
+                  }
+                }
+              }
+            }
+          },
+          
+        },
+        "/users/{id}": {
+          "put": {
+            "summary": "Alterar usuário",
+            "description": "Altera um usuário de acordo com o ID",
+            "tags": ["Users"],
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "description": "ID do usuário que será atualizado",
+                "required": true,
+              },
+            ],
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "email": {
+                        "type": "string"
+                      },
+                      "password": {
+                        "type": "string"
+                      },
+                      "firstname": {
+                        "type": "string"
+                      },
+                      "lastname": {
+                        "type": "string"
+                      },
+                      "country": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "203": {
+                "description": "Usuário Atualizado!",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                    }
+                  }
+                }
+              }
+            }
+          },
         }
       }
     },
