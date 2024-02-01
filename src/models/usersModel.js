@@ -1,23 +1,22 @@
 const usersDb = ["Usuário"]
 
-
-// temporária
-const getAll = (user) => {
-  return usersDb
-}
-
-const create = (user) => {
+const register = (user) => {
   usersDb.push(user)
 }
 
+const findOne = (userEmail) => {
+  const index = usersDb.findIndex(user => user.email === userEmail)
+  return usersDb[index]
+}
+
 const update = (userId, userUpdated) => {
-  const index = userDb.findIndex(user => user.id === userId)
+  const index = usersDb.findIndex(user => user.id === userId)
   usersDb[index] = userUpdated
 }
 
 export default {
   usersDb,
-  getAll,
-  create,
-  update
+  register,
+  update,
+  findOne
 }

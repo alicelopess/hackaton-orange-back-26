@@ -20,13 +20,13 @@ router.put('/projects/:id', projectsController.update)
 // DELETE http://localhost:3333/projects/id
 router.delete('/projects/:id', projectsController.remove)
 
-// GET
-router.get('/users', usersController.getAll)
-
 // CREATE
-router.post('/users', usersController.create)
+router.post('/users', usersController.register)
 
 // PUT
 router.put('/users/:id', usersController.update)
+
+// GET
+router.post('/login', usersController.login)
 
 export default router

@@ -1,6 +1,7 @@
 import projectsModel from '../models/projectsModel.js'
 import { v4 as uuidv4 } from 'uuid'
 
+
 //GET - Liste todos os projetos
 const getAll = (request, response) => {
     const projects = projectsModel.getAll()
@@ -22,7 +23,7 @@ const create = (request, response) => {
         date,
     }
 
-    projectsModel.create(project)
+    projectsModel.register(project)
 
     return response.status(201).send('Projeto Criado!')
 }
@@ -69,8 +70,8 @@ const remove = (request, response) => {
 }
 
 export default {
-    getAll,
     create,
+    getAll,
     getOne,
     update,
     remove
