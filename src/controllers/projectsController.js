@@ -3,15 +3,23 @@ import { v4 as uuidv4 } from 'uuid'
 
 
 //GET - Liste todos os projetos
-const getAll = (request, response) => {
-    const projects = projectsModel.getAll()
-    
-    return response.status(200).json(projects)
+const getAll = async (request, response) => {
+    try {
+        //listando dados
+        const projects = await projectsModel.find()
+
+        //devolvendo resposta
+        //return response.status(200).json(projects)
+        return response.status(200).json(projects)
+
+    } catch(error) {
+        return response.status(500).json({error: error})
+    }
 }
 
 //POST - Crie um projeto
-const create = (request, response) => {
-    const {title, tag, link, description, image, date} = request.body
+const create = async (request, response) => {
+    const {title, tag, link, description, image} = request.body
     
     var project = {
         id: uuidv4(),
@@ -19,54 +27,91 @@ const create = (request, response) => {
         tag,
         link,
         description,
-        image,
-        date,
+        image
     }
 
-    projectsModel.register(project)
+    try {
+        //criando dados
+        const newProject = await projectsModel.create(project)
 
-    return response.status(201).send('Projeto Criado!')
+        //devolvendo resposta
+        //return response.status(201).send('Projeto Criado com Sucesso!')
+
+        return response.status(201).json({ message: 'Projeto Criado com Sucesso!', data: newProject})
+
+    } catch(error) {
+        return response.status(500).json({error: error})
+    }
 }
 
 //GET com ID- Liste UM projeto
-const getOne = (request, response) => {
+const getOne = async (request, response) => {
     const projectId = request.params.id
 
-    const project = projectsModel.getOne(projectId)
+    try {
+        //criando dados
+        const project = await projectsModel.findOne({_id: projectId})
 
-    return response.status(200).json(project)
+        if(!project) {
+            return response.status(422).json({message: 'Projeto não encontrado!'})
+        }
+
+        return response.status(200).json(project)
+
+    } catch(error) {
+        return response.status(500).json({error: error})
+    }
 }
 
 //PUT - Atualize um projeto
-const update = (request, response) => {
+const update = async (request, response) => {
 
     const projectId = request.params.id
 
-    const {title, tag, link, description, image, date} = request.body
+    const {title, tag, link, description, image} = request.body
 
-    var projectUpdated = {
+    var project = {
         id: projectId,
         title,
         tag,
         link,
         description,
-        image,
-        date,
+        image
     }
-    
-    projectsModel.update(projectId, projectUpdated)
 
-    return response.status(203).send('Projeto Atualizado!')
+    try {
+        //criando dados
+        const updatedProject = await projectsModel.updateOne({_id: projectId}, project)
+
+        //devolvendo resposta
+        return response.status(203).send('Projeto Atualizado!')
+
+    } catch(error) {
+        return response.status(500).json({error: error})
+    }
 }
 
 //DELETE - Remova um projeto
-const remove = (request, response) => {
+const remove = async (request, response) => {
 
     const projectId = request.params.id
 
-    projectsModel.remove(projectId)
+    const project = await projectsModel.findOne({_id: projectId})
 
-    return response.status(201).send('Projeto Removido!')
+    if(!project) {
+        return response.status(422).json({message: 'Projeto não encontrado!'})
+    }
+
+    try {
+        await projectsModel.deleteOne({_id: projectId})
+
+        //devolvendo resposta
+        return response.status(200).send('Projeto Removido com Sucesso!')
+
+    } catch(error) {
+        return response.status(500).json({error: error})
+    }
+
 }
 
 export default {
