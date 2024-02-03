@@ -53,7 +53,6 @@ const createMemory = (project) => {
 
 const getOneMemory = (projectId) => {
     const index = projectsDb.findIndex(project => project.id === projectId)
-
     return projectsDb[index]
 }
 

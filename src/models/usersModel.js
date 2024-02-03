@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 const {Schema} = mongoose
 const usersDb = ["Usuário"]
 
+
 //Definição do Schema de Usuário
 /*
 const userSchema = new Schema({

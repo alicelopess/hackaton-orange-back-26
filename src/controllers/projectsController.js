@@ -17,10 +17,10 @@ const getAll = async (request, response) => {
     }
 }
 
+
 //POST - Crie um projeto
 const create = async (request, response) => {
     const {title, tag, link, description, image} = request.body
-    
     var project = {
         id: uuidv4(),
         title,
@@ -42,6 +42,7 @@ const create = async (request, response) => {
     } catch(error) {
         return response.status(500).json({error: error})
     }
+
 }
 
 //GET com ID- Liste UM projeto
@@ -111,7 +112,6 @@ const remove = async (request, response) => {
     } catch(error) {
         return response.status(500).json({error: error})
     }
-
 }
 
 export default {

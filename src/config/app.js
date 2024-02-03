@@ -5,8 +5,7 @@ import swaggerJsDoc from 'swagger-jsdoc'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import connection from '../models/connection.js'
-
-
+import 'dotenv/config'
 import options from './swagger.js'
 
 const specs = swaggerJsDoc(options)
