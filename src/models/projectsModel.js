@@ -10,7 +10,6 @@ const create = (project) => {
 
 const getOne = (projectId) => {
     const index = projectsDb.findIndex(project => project.id === projectId)
-
     return projectsDb[index]
 }
 

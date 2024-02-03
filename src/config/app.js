@@ -4,10 +4,9 @@ import swaggerUI from 'swagger-ui-express'
 import swaggerJsDoc from 'swagger-jsdoc'
 import cors from 'cors'
 import bodyParser from 'body-parser'
-
+import 'dotenv/config'
 
 import options from './swagger.js'
-
 const specs = swaggerJsDoc(options)
 
 const app = express()

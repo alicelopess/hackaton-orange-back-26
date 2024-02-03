@@ -1,4 +1,4 @@
-const usersDb = ["Usuário"]
+const usersDb = ['']
 
 const register = (user) => {
   usersDb.push(user)

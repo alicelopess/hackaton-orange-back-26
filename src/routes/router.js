@@ -1,6 +1,7 @@
 import express from 'express'
 import projectsController from '../controllers/projectsController.js'
 import usersController from '../controllers/usersController.js'
+import authMiddleware from '../config/auth.js'
 
 const router = express.Router()
 
@@ -24,7 +25,7 @@ router.delete('/projects/:id', projectsController.remove)
 router.post('/users', usersController.register)
 
 // PUT
-router.put('/users/:id', usersController.update)
+router.put('/users/:id', authMiddleware, usersController.update)
 
 // GET
 router.post('/login', usersController.login)
