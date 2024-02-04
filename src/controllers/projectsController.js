@@ -1,7 +1,6 @@
 import projectsModel from '../models/projectsModel.js'
 import { v4 as uuidv4 } from 'uuid'
 
-
 //GET - Liste todos os projetos
 const getAll = async (request, response) => {
     try {
@@ -9,7 +8,6 @@ const getAll = async (request, response) => {
         const projects = await projectsModel.find()
 
         //devolvendo resposta
-        //return response.status(200).json(projects)
         return response.status(200).json(projects)
 
     } catch(error) {
@@ -17,11 +15,10 @@ const getAll = async (request, response) => {
     }
 }
 
-
 //POST - Crie um projeto
 const create = async (request, response) => {
     const {title, tag, link, description, image} = request.body
-    var project = {
+    const project = {
         id: uuidv4(),
         title,
         tag,
@@ -29,14 +26,11 @@ const create = async (request, response) => {
         description,
         image
     }
-
     try {
         //criando dados
         const newProject = await projectsModel.create(project)
 
         //devolvendo resposta
-        //return response.status(201).send('Projeto Criado com Sucesso!')
-
         return response.status(201).json({ message: 'Projeto Criado com Sucesso!', data: newProject})
 
     } catch(error) {
@@ -56,9 +50,7 @@ const getOne = async (request, response) => {
         if(!project) {
             return response.status(422).json({message: 'Projeto não encontrado!'})
         }
-
         return response.status(200).json(project)
-
     } catch(error) {
         return response.status(500).json({error: error})
     }

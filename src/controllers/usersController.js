@@ -13,40 +13,76 @@ function generateToken(user){
 }
 
 //POST - Cria um novo usuário
-const register = (request, response) => {
-    const {email, password, firstname, lastname} = request.body
-    // verifica se o email já está cadastrado
-
-    const emailAlreadyExists = usersModel.findOne(email)
-    if(!email || !password || !firstname || !lastname){
-        return response.status(400).send("Faltaram dados")        
+const register = async (request, response) => {
+    const {email, password, firstName, lastName, profileImage} = request.body
+    //Limita tamanho dos textos
+    if(email.length > 256 || password.length > 32 || firstName.length > 32 || lastName.length > 32){
+        return response.status(400).send({error: "Dados inválidos!"})       
     }
-
+    //Verifica se o nome tem caracteres especiais
+    if(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(firstName) || /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(lastName)){
+        return response.status(400).send({error: "Dados inválidos!"})
+    }
+    //Verifica se email é válido com REGEX
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+        return response.status(400).send({error: "E-mail inválido!"})
+    } 
+    //Verifica se todos os dados foram enviados
+    if(!email || !password || !firstName || !lastName){
+        return response.status(400).send({error: "Faltaram dados!"})        
+    }
+    //Verifica se o email já está cadastrado
+    const emailAlreadyExists = await usersModel.findOne({email: email})
     if(emailAlreadyExists){
-        return response.status(400).send("Email already exists!")
+        return response.status(400).send({error: "E-mail já consta na base de dados!"})
+    }
+    //Verifica se a imagem
+    if (!(/image\//g).test(profileImage)){
+        return response.status(400).send({error: "Imagem inválida!"})
+    }
+    if(profileImage && (/image\//g).test(profileImage)){
+        const fileLength = Buffer.from(profileImage, 'base64').length;
+        if(fileLength/1024 > 1024){
+            return response.status(400).send({error: "Imagem inválida!"})
+        }
     }
     //cria o hash da senha
     const hash = bcrypt.hashSync(password, saltRounds)
     const user = {
         id: uuidv4(),
+        firstName,
+        lastName,
         email,
-        password: hash,
-        firstname,
-        lastname,
-        country: "Brasil",
+        profileImage: "sasa",
+        password: hash
     }
-    usersModel.register(user)
-    return response.send({user, token: generateToken({id: user.id })})
+    try {
+        const newUser = await usersModel.create(user)
+        return response.status(201).send({UserID: newUser.id, User: newUser.firstName, message: "Usuário criado!"})
+    }
+    catch(error) {
+        return response.status(500).json({error: error})
+    }
+    
 }
-
-const login = (request, response) => {
+ 
+const login = async (request, response) => {
     const {email, password} = request.body
-    const user = usersModel.findOne(email) 
+    if(email.length > 256 || password.length > 32){
+        return response.status(400).send("Dados inválidos!")        
+    }
+    const user = await usersModel.findOne({email: email})
     if(!user){
         return response.status(400).send("Usuário não encontrado!")
     } else {
         if(bcrypt.compareSync(password, user.password)){
-            return response.send({ user, token: generateToken({id: user.id})})
+            return response.send({
+                id: user.id, 
+                firstName: user.firstName, 
+                lastName: user.lastName,
+                country: user.country,
+                token: generateToken({_id: user.id})
+            })
         } else {
             return response.status(400).send("Senha incorreta!")
         }
@@ -56,25 +92,48 @@ const login = (request, response) => {
 //PUT - Atualiza dados de um usuário
 const update = (request, response) => {
     const userId = request.params.id
-    const {email, password, firstname, lastname, country} = request.body
+    const {email, password, firstName, lastName} = request.body
+    if(request.userId !== userId){
+        console.log(request.userId)
+        return response.status(403).send("Não permitido")
+    }
     // verifica se o email já está cadastrado
-    const emailAlreadyExists = usersModel.findOne(email) 
-    if(emailAlreadyExists){
+    if(email.length > 256 || password.length > 32 || firstName.length > 32 || lastName.length > 32){
+        return response.status(400).send("Dados inválidos!")        
+    }
+    //Verifica se o nome tem caracteres especiais
+    if(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(firstName) || /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(lastName)){
+        return response.status(400).send({error: "Dados inválidos!"})
+    }
+    //Verifica se email é válido com REGEX
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+        return response.status(400).send("E-mail inválido!")
+    } 
+    const emailAlreadyExists = usersModel.findOne(email)
+    if(emailAlreadyExists && userId != emailAlreadyExists.id){
         return response.status(400).send("Email already exists!")
+    }
+    if(!email){
+        email = emailAlreadyExists.email
+    }
+    if(!email){
+        password = emailAlreadyExists.password
+    }
+    if(!firstName){
+        firstName = emailAlreadyExists.firstName
+    }
+    if(!lastName){
+        lastName = emailAlreadyExists.lastName
     }
     const userUpdated = {
         email,
         password,
-        firstname,
-        lastname,
+        firstName,
+        lastName,
         country,
     }
     usersModel.update(userId, userUpdated)
     return response.status(203).send(userUpdated)
 }
 
-export default {
-    register,
-    update,
-    login
-}
+export default { register, login, update }

@@ -1,10 +1,8 @@
 import mongoose from 'mongoose'
 const {Schema} = mongoose
-const usersDb = ["Usuário"]
-
 
 //Definição do Schema de Usuário
-/*
+
 const userSchema = new Schema({
   firstName: {
       type: String,
@@ -15,6 +13,10 @@ const userSchema = new Schema({
       required: true,
   },
   email: {
+      type: String,
+      required: true,
+  },
+  password: {
       type: String,
       required: true,
   },
@@ -35,25 +37,8 @@ const userSchema = new Schema({
     default: Date.now(),
 },
 })
-*/
 
-const register = (user) => {
-  usersDb.push(user)
-}
+//Definindo o Model
+const User = mongoose.model('User', userSchema)
 
-const findOne = (userEmail) => {
-  const index = usersDb.findIndex(user => user.email === userEmail)
-  return usersDb[index]
-}
-
-const update = (userId, userUpdated) => {
-  const index = usersDb.findIndex(user => user.id === userId)
-  usersDb[index] = userUpdated
-}
-
-export default {
-  usersDb,
-  register,
-  update,
-  findOne
-}
+export default User
