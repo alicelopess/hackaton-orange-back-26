@@ -12,6 +12,11 @@ function generateToken(user){
     })
 }
 
+function getIdFromToken(token){
+    const idDecoded = jwt.verify(token, process.env.JWT_SECRET)
+    return idDecoded.user
+}
+
 //POST - Cria um novo usuário
 const register = async (request, response) => {
     const {email, password, firstName, lastName, profileImage} = request.body
@@ -42,7 +47,7 @@ const register = async (request, response) => {
     }
     if(profileImage && (/image\//g).test(profileImage)){
         const fileLength = Buffer.from(profileImage, 'base64').length;
-        if(fileLength/1024 > 1024){
+        if(fileLength/1024 > 102400){
             return response.status(400).send({error: "Imagem inválida!"})
         }
     }
@@ -81,7 +86,7 @@ const login = async (request, response) => {
                 firstName: user.firstName, 
                 lastName: user.lastName,
                 country: user.country,
-                token: generateToken({_id: user.id})
+                token: generateToken({id: user.id})
             })
         } else {
             return response.status(400).send("Senha incorreta!")
@@ -90,11 +95,13 @@ const login = async (request, response) => {
 }
 
 //PUT - Atualiza dados de um usuário
-const update = (request, response) => {
+const update = async (request, response) => {
     const userId = request.params.id
     const {email, password, firstName, lastName} = request.body
-    if(request.userId !== userId){
-        console.log(request.userId)
+    const authorizationHeader = request.headers['authorization']
+    const token = authorizationHeader.split(" ")[1]
+    const userIdLogged = getIdFromToken(token)
+    if(userIdLogged !== userId){
         return response.status(403).send("Não permitido")
     }
     // verifica se o email já está cadastrado
@@ -109,14 +116,14 @@ const update = (request, response) => {
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
         return response.status(400).send("E-mail inválido!")
     } 
-    const emailAlreadyExists = usersModel.findOne(email)
+    const emailAlreadyExists = await usersModel.findOne({email})
     if(emailAlreadyExists && userId != emailAlreadyExists.id){
-        return response.status(400).send("Email already exists!")
+        return response.status(400).send(/* "E-mail já consta na base de dados!" */)
     }
     if(!email){
         email = emailAlreadyExists.email
     }
-    if(!email){
+    if(!password){
         password = emailAlreadyExists.password
     }
     if(!firstName){
@@ -130,9 +137,8 @@ const update = (request, response) => {
         password,
         firstName,
         lastName,
-        country,
     }
-    usersModel.update(userId, userUpdated)
+    await usersModel.updateOne({id: userId}, userUpdated)
     return response.status(203).send(userUpdated)
 }
 

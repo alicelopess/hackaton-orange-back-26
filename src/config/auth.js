@@ -2,7 +2,6 @@ import jwt from 'jsonwebtoken'
 
 function authMiddleware (request, response, next) {
   const authHeader = request.headers.authorization
-  console.log(authHeader)
   if(!authHeader)
     return response.status(401).send({error: "Token não gerado"})
 
@@ -14,8 +13,6 @@ function authMiddleware (request, response, next) {
   const [ scheme, token ] = parts
 
     if(!/^Bearer/i.test(scheme)){
-      console.log(scheme)
-      console.log(!/^Bearer$/i.test(scheme))
       return response.status(401).send({ error: 'Formato do token incorreto'})
     }
 

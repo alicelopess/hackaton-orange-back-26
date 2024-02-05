@@ -11,6 +11,9 @@ const projectSchema = new Schema({
         type: String,
         required: true,
     },
+    creatorId: {
+        type: String,
+    },
     link: {
         type: String,
         required: true,
@@ -27,10 +30,6 @@ const projectSchema = new Schema({
         type: Date,
         default: Date.now(),
     },
-    creatorId: {
-        type: String,
-        default: 'userId'
-    }, //Precisa ser redefinido
 })
 
 //Definindo o Model

@@ -4,6 +4,10 @@ const {Schema} = mongoose
 //Definição do Schema de Usuário
 
 const userSchema = new Schema({
+  id: {
+    type: String,
+    required: true,
+  },
   firstName: {
       type: String,
       required: true,
@@ -28,14 +32,11 @@ const userSchema = new Schema({
   profileImage: {
       type: String,
       default: 'image'
-  }, //Precisa ser redefinido
-  projects: {
-      type: Array,
-  }, //Precisa ser redefinido
+  },
   createdAt: {
     type: Date,
     default: Date.now(),
-},
+  },
 })
 
 //Definindo o Model

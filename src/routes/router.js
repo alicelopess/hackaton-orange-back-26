@@ -5,26 +5,22 @@ import authMiddleware from '../config/auth.js'
 
 const router = express.Router()
 
-// TODO: Criação dos Endpoints
-// GET http://localhost:3333/projects
-router.get('/projects', projectsController.getAll)
+router.get('/projects', authMiddleware, projectsController.getAll)
 
-// POST http://localhost:3333/projects
-router.post('/projects', projectsController.create)
+router.post('/projects', authMiddleware, projectsController.create)
 
-// GET http://localhost:3333/projects/id
-router.get('/projects/:id', projectsController.getOne)
+router.get('/projects/:id', authMiddleware, projectsController.getOne)
 
-// PUT http://localhost:3333/projects/id
-router.put('/projects/:id', projectsController.update)
+router.put('/projects/:id', authMiddleware, projectsController.update)
 
-// DELETE http://localhost:3333/projects/id
-router.delete('/projects/:id', projectsController.remove)
+router.delete('/projects/:id', authMiddleware, projectsController.remove)
 
 router.post('/users', usersController.register)
 
 router.put('/users/:id', authMiddleware, usersController.update)
 
 router.post('/login', usersController.login)
+
+//rota de logout
 
 export default router
