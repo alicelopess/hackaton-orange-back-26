@@ -19,7 +19,7 @@ function getIdFromToken(token){
 
 //POST - Cria um novo usuário
 const register = async (request, response) => {
-    const {email, password, firstName, lastName, profileImage} = request.body
+    const {email, password, firstName, lastName} = request.body
     //Limita tamanho dos textos
     if(email.length > 256 || password.length > 32 || firstName.length > 32 || lastName.length > 32){
         return response.status(400).send({error: "Dados inválidos!"})       
@@ -41,17 +41,6 @@ const register = async (request, response) => {
     if(emailAlreadyExists){
         return response.status(400).send({error: "E-mail já consta na base de dados!"})
     }
-
-    //Verifica se a imagem - Removi pois nao tem imagem no cadastro
-    // if (!(/image\//g).test(profileImage)){
-    //     return response.status(400).send({error: "Imagem inválida!"})
-    // }
-    // if(profileImage && (/image\//g).test(profileImage)){
-    //     const fileLength = Buffer.from(profileImage, 'base64').length;
-    //     if(fileLength/1024 > 102400){
-    //         return response.status(400).send({error: "Imagem inválida!"})
-    //     }
-    // }
 
     //cria o hash da senha
     const hash = bcrypt.hashSync(password, saltRounds)
