@@ -3,6 +3,10 @@ const { Schema } = mongoose
 
 //Modelagem dos dados do Projeto - Schema
 const projectSchema = new Schema({
+    id: {
+        type: String,
+        required: true,
+      },
     title: {
         type: String,
         required: true,

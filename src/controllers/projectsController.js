@@ -30,12 +30,13 @@ const create = async (request, response) => {
     const token = authorizationHeader.split(" ")[1]
     const userIdLogged = getIdFromToken(token)
     const project = {
+        id: uuidv4(),
         title,
         tag,
         link,
         description,
         image,
-        creatorId: "id", //receber id do usuaŕio logado
+        creatorId: "id", //receber id do usuaŕio logado - userIdLogged
     }
     try {
         //criando dados

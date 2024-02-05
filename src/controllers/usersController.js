@@ -41,16 +41,18 @@ const register = async (request, response) => {
     if(emailAlreadyExists){
         return response.status(400).send({error: "E-mail já consta na base de dados!"})
     }
-    //Verifica se a imagem
-    if (!(/image\//g).test(profileImage)){
-        return response.status(400).send({error: "Imagem inválida!"})
-    }
-    if(profileImage && (/image\//g).test(profileImage)){
-        const fileLength = Buffer.from(profileImage, 'base64').length;
-        if(fileLength/1024 > 102400){
-            return response.status(400).send({error: "Imagem inválida!"})
-        }
-    }
+
+    //Verifica se a imagem - Removi pois nao tem imagem no cadastro
+    // if (!(/image\//g).test(profileImage)){
+    //     return response.status(400).send({error: "Imagem inválida!"})
+    // }
+    // if(profileImage && (/image\//g).test(profileImage)){
+    //     const fileLength = Buffer.from(profileImage, 'base64').length;
+    //     if(fileLength/1024 > 102400){
+    //         return response.status(400).send({error: "Imagem inválida!"})
+    //     }
+    // }
+
     //cria o hash da senha
     const hash = bcrypt.hashSync(password, saltRounds)
     const user = {
@@ -58,12 +60,13 @@ const register = async (request, response) => {
         firstName,
         lastName,
         email,
-        profileImage: "sasa",
+        profileImage,
         password: hash
     }
     try {
         const newUser = await usersModel.create(user)
         return response.status(201).send({UserID: newUser.id, User: newUser.firstName, message: "Usuário criado!"})
+        //Redirect .redirect(url) - fiz no front mas precisa mudar
     }
     catch(error) {
         return response.status(500).json({error: error})
@@ -88,6 +91,7 @@ const login = async (request, response) => {
                 country: user.country,
                 token: generateToken({id: user.id})
             })
+            //redirect - pagina incial
         } else {
             return response.status(400).send("Senha incorreta!")
         }
