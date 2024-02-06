@@ -6,26 +6,6 @@ const options = {
       "description": "Portfolio de projetos",
       "version": "1.0.0",
     },
-
-  }
-}
-
-
-
-
-
-
-
-
-/* 
-
-"definition": {
-    "openapi": "3.0.0",
-    "info": {
-      "title": "Orange portfolio",
-      "description": "Portfolio de projetos",
-      "version": "1.0.0",
-    },
     "paths": {
         "/projects": {
           "get": {
@@ -264,5 +244,3 @@ const options = {
 }
 
 export default options
-
-   */
