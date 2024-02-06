@@ -15,6 +15,9 @@ const projectSchema = new Schema({
     creatorId: {
         type: String,
     },
+    creatorName: {
+        type: String,
+    },
     link: {
         type: String,
         required: true,

@@ -25,6 +25,4 @@ router.put('/users/:id', authMiddleware, usersController.update)
 
 router.post('/login', usersController.login)
 
-//rota de logout
-
 export default router

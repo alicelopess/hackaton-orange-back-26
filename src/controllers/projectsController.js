@@ -1,25 +1,13 @@
 import projectsModel from '../models/projectsModel.js'
+import usersModel from '../models/projectsModel.js'
 import { v4 as uuidv4 } from 'uuid'
 import jwt from 'jsonwebtoken'
 import 'dotenv/config'
-import authMiddleware from '../config/auth.js';
 
 function getIdFromToken(token){
-    const idDecoded = jwt.verify(token, process.env.JWT_SECRET);
+    const idDecoded = jwt.verify(token, process.env.JWT_SECRET)
     return idDecoded.user
 }
-
-/* //GET - Liste todos os projetos
-const getAll = async (request, response) => {
-    try {
-        //listando dados
-        const projects = await projectsModel.find()
-        //devolvendo resposta
-        return response.status(200).json({projetos: projects})
-    } catch(error) {
-        return response.status(500).json({error: error})
-    }
-} */
 
 const getUserProjects = async (request, response) => {
     const authorizationHeader = request.headers['authorization']
@@ -48,10 +36,50 @@ const getAnotherUserProjects = async (request, response) => {
 
 //POST - Crie um projeto
 const create = async (request, response) => {
-    console.log(authMiddleware.idDecoded)
     const {title, tag, link, description, image} = request.body
     // validação tamanho das strings
-    if(title.length > 50 || tag.length > 2 || link.length > 2083 || description.length > 200 ){
+    if(title.length > 50 || tag.length > 2 || tag[0].length > 20 || tag[1].length > 20 || link.length > 2083 || description.length > 200 ){
+        return response.status(400).send("Dados inválidos!")        
+    }
+     if (!(/image\//g).test(image)){
+         return response.status(400).send({error: "Imagem inválida!"})
+     }
+     if(image && (/image\//g).test(image)){
+         const fileLength = Buffer.from(image, 'base64').length;
+         if(fileLength/1024 > 102400){
+             return response.status(400).send({error: "Imagem inválida!"})
+         }
+     }
+    const authorizationHeader = request.headers['authorization']
+    const token = authorizationHeader.split(" ")[1]
+    const userIdLogged = getIdFromToken(token)
+    const userName = await usersModel.findOne({id: userIdLogged})
+    const project = {
+        id: uuidv4(),
+        title,
+        tag,
+        link,
+        description,
+        image,
+        creatorName: userName,
+        creatorId: userIdLogged,
+    }
+    try {
+        //criando dados
+        const newProject = await projectsModel.create(project)
+        const projects = await projectsModel.find({creatorId: userIdLogged})
+        //devolvendo resposta
+        return response.status(201).json({ message: 'Projeto Criado com Sucesso!', data: projects})
+    } catch(error) {
+        return response.status(500).json({error: error})
+    }
+}
+
+//PUT - Atualize um projeto
+const update = async (request, response) => {
+    const projectId = request.params.id
+    const {title, tag, link, description, image} = request.body
+    if(title.length > 50 || tag.length > 2 || tag[0].length > 20 || tag[1].length > 20 || link.length > 2083 || description.length > 200 ){
         return response.status(400).send("Dados inválidos!")        
     }
     //Verifica se a imagem - Removi pois nao tem imagem no cadastro
@@ -67,50 +95,18 @@ const create = async (request, response) => {
     const authorizationHeader = request.headers['authorization']
     const token = authorizationHeader.split(" ")[1]
     const userIdLogged = getIdFromToken(token)
+
+    const creatorProjectId = await projectsModel.findOne({id: projectId})
+    
+    if(!creatorProjectId){
+        return response.status(400).send({error: "ID inválido!"})
+    }
+
+    if(creatorProjectId.creatorId !== userIdLogged){
+        return response.status(400).send({error: "Esse projeto não é seu!"})
+    }
+
     const project = {
-        id: uuidv4(),
-        title,
-        tag,
-        link,
-        description,
-        image,
-        creatorId: userIdLogged,
-    }
-    try {
-        //criando dados
-        const newProject = await projectsModel.create(project)
-        //devolvendo resposta
-        return response.status(201).json({ message: 'Projeto Criado com Sucesso!', data: newProject})
-    } catch(error) {
-        return response.status(500).json({error: error})
-    }
-}
-
-//GET com ID- Liste UM projeto
-const getOne = async (request, response) => {
-    const projectId = request.params.id
-
-    try {
-        //criando dados
-        const project = await projectsModel.findOne({_id: projectId})
-        if(!project) {
-            return response.status(422).json({message: 'Projeto não encontrado!'})
-        }
-        return response.status(200).json(project)
-    } catch(error) {
-        return response.status(500).json({error: error})
-    }
-}
-
-//PUT - Atualize um projeto
-const update = async (request, response) => {
-
-    const projectId = request.params.id
-
-    const {title, tag, link, description, image} = request.body
-
-    var project = {
-        id: projectId,
         title,
         tag,
         link,
@@ -120,9 +116,10 @@ const update = async (request, response) => {
 
     try {
         //criando dados
-        const updatedProject = await projectsModel.updateOne({_id: projectId}, project)
+        const updatedProject = await projectsModel.updateOne({id: projectId}, project)
         //devolvendo resposta
-        return response.status(203).send('Projeto Atualizado!')
+        const projects = await projectsModel.find({creatorId: userIdLogged})
+        return response.status(203).send({message: 'Edição concluída com sucesso!', projectsArray: projects})
     } catch(error) {
         return response.status(500).json({error: error})
     }
@@ -131,15 +128,22 @@ const update = async (request, response) => {
 //DELETE - Remova um projeto
 const remove = async (request, response) => {
     const projectId = request.params.id
-    const project = await projectsModel.findOne({_id: projectId})
+    const authorizationHeader = request.headers['authorization']
+    const token = authorizationHeader.split(" ")[1]
+    const userIdLogged = getIdFromToken(token)
+    const project = await projectsModel.findOne({id: projectId})
 
     if(!project) {
         return response.status(422).json({message: 'Projeto não encontrado!'})
     }
+    if(project.creatorId !== userIdLogged){
+        return response.status(400).json({message: 'Esse projeto não é seu!'})
+    }
     try {
-        await projectsModel.deleteOne({_id: projectId})
+        await projectsModel.deleteOne({id: projectId})
         //devolvendo resposta
-        return response.status(200).send('Projeto Removido com Sucesso!')
+        const projects = await projectsModel.find({creatorId: userIdLogged})
+        return response.status(200).send({message: 'Projeto Removido com Sucesso!', projectsArray: projects})
     } catch(error) {
         return response.status(500).json({error: error})
     }
@@ -147,7 +151,6 @@ const remove = async (request, response) => {
 
 export default {
     create,
-   // getAll,
     getUserProjects,
     getAnotherUserProjects,
     getOne,
