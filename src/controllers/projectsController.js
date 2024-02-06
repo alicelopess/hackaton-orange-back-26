@@ -15,7 +15,21 @@ const getAll = async (request, response) => {
         //listando dados
         const projects = await projectsModel.find()
         //devolvendo resposta
-        return response.status(200).json({projetos: projects})
+        return response.status(200).json(projects)
+    } catch(error) {
+        return response.status(500).json({error: error})
+    }
+}
+
+const getAllFromUser = async (request, response) => {
+    const userToken = request.headers.authorization.split(" ")[1];
+    const user = jwt.decode(userToken)
+
+    try {
+        //listando dados
+        const projects = await projectsModel.find({creatorId: user.user})
+        //devolvendo resposta
+        return response.status(200).json(projects)
     } catch(error) {
         return response.status(500).json({error: error})
     }
@@ -28,7 +42,7 @@ const create = async (request, response) => {
     // validação de imagem
     const authorizationHeader = request.headers['authorization']
     const token = authorizationHeader.split(" ")[1]
-    const userIdLogged = getIdFromToken(token)
+    const user = getIdFromToken(token)
     const project = {
         id: uuidv4(),
         title,
@@ -36,13 +50,14 @@ const create = async (request, response) => {
         link,
         description,
         image,
-        creatorId: "id", //receber id do usuaŕio logado - userIdLogged
+        creatorId: user.user, //receber id do usuaŕio logado - userIdLogged
     }
     try {
         //criando dados
         const newProject = await projectsModel.create(project)
+        const projects = await projectsModel.find({creatorId: user.user})
         //devolvendo resposta
-        return response.status(201).json({ message: 'Projeto Criado com Sucesso!', data: newProject})
+        return response.status(201).json({ message: 'Projeto Criado com Sucesso!', data: projects })
     } catch(error) {
         return response.status(500).json({error: error})
     }
@@ -66,7 +81,9 @@ const getOne = async (request, response) => {
 
 //PUT - Atualize um projeto
 const update = async (request, response) => {
-
+    const authorizationHeader = request.headers['authorization']
+    const token = authorizationHeader.split(" ")[1]
+    const user = getIdFromToken(token)
     const projectId = request.params.id
 
     const {title, tag, link, description, image} = request.body
@@ -83,8 +100,9 @@ const update = async (request, response) => {
     try {
         //criando dados
         const updatedProject = await projectsModel.updateOne({_id: projectId}, project)
+        const projects = await projectsModel.find({creatorId: user.user})
         //devolvendo resposta
-        return response.status(203).send('Projeto Atualizado!')
+        return response.status(203).send({message: 'Edição concluída com sucesso!', projectsArray: projects})
     } catch(error) {
         return response.status(500).json({error: error})
     }
@@ -92,6 +110,10 @@ const update = async (request, response) => {
 
 //DELETE - Remova um projeto
 const remove = async (request, response) => {
+    const authorizationHeader = request.headers['authorization']
+    const token = authorizationHeader.split(" ")[1]
+    const user = getIdFromToken(token)
+
     const projectId = request.params.id
     const project = await projectsModel.findOne({_id: projectId})
 
@@ -101,7 +123,8 @@ const remove = async (request, response) => {
     try {
         await projectsModel.deleteOne({_id: projectId})
         //devolvendo resposta
-        return response.status(200).send('Projeto Removido com Sucesso!')
+        const projects = await projectsModel.find({creatorId: user.user})
+        return response.status(200).send({message:'Projeto Removido com Sucesso!', projectsArray: projects})
     } catch(error) {
         return response.status(500).json({error: error})
     }
@@ -110,6 +133,7 @@ const remove = async (request, response) => {
 export default {
     create,
     getAll,
+    getAllFromUser,
     getOne,
     update,
     remove

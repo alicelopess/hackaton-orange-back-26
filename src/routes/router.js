@@ -5,7 +5,9 @@ import authMiddleware from '../config/auth.js'
 
 const router = express.Router()
 
-router.get('/projects', authMiddleware, projectsController.getAll)
+// router.get('/projects', authMiddleware, projectsController.getAll)
+
+router.get('/projects', authMiddleware, projectsController.getAllFromUser)
 
 router.post('/projects', authMiddleware, projectsController.create)
 
