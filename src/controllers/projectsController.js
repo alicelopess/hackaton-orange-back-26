@@ -4,13 +4,12 @@ import jwt from 'jsonwebtoken'
 import 'dotenv/config'
 
 function getIdFromToken(token){
-    const idDecoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(idDecoded)
-    return idDecoded
+    const idDecoded = jwt.verify(token, process.env.JWT_SECRET)
+    return idDecoded //idDecoded.user
 }
 
 //GET - Liste todos os projetos
-const getAll = async (request, response) => {
+const getAll = async (request, response) => { //DEIXOU DE EXISTIR
     try {
         //listando dados
         const projects = await projectsModel.find()
@@ -22,7 +21,7 @@ const getAll = async (request, response) => {
 }
 
 const getAllFromUser = async (request, response) => {
-    const userToken = request.headers.authorization.split(" ")[1];
+    const userToken = request.headers.authorization.split(" ")[1]
     const user = jwt.decode(userToken)
 
     try {
@@ -81,15 +80,15 @@ const getOne = async (request, response) => {
 
 //PUT - Atualize um projeto
 const update = async (request, response) => {
+    const projectId = request.params.id
+    const {title, tag, link, description, image} = request.body
+
     const authorizationHeader = request.headers['authorization']
     const token = authorizationHeader.split(" ")[1]
     const user = getIdFromToken(token)
-    const projectId = request.params.id
-
-    const {title, tag, link, description, image} = request.body
 
     var project = {
-        id: projectId,
+        id: projectId, //REMOVIDO
         title,
         tag,
         link,
@@ -99,7 +98,7 @@ const update = async (request, response) => {
 
     try {
         //criando dados
-        const updatedProject = await projectsModel.updateOne({_id: projectId}, project)
+        const updatedProject = await projectsModel.updateOne({_id: projectId}, project) //TEM QUE MUDAR O _ID
         const projects = await projectsModel.find({creatorId: user.user})
         //devolvendo resposta
         return response.status(203).send({message: 'Edição concluída com sucesso!', projectsArray: projects})
@@ -115,13 +114,13 @@ const remove = async (request, response) => {
     const user = getIdFromToken(token)
 
     const projectId = request.params.id
-    const project = await projectsModel.findOne({_id: projectId})
+    const project = await projectsModel.findOne({_id: projectId}) //TEM QUE MUDAR O _ID
 
     if(!project) {
         return response.status(422).json({message: 'Projeto não encontrado!'})
     }
     try {
-        await projectsModel.deleteOne({_id: projectId})
+        await projectsModel.deleteOne({_id: projectId}) //TEM QUE MUDAR O _ID
         //devolvendo resposta
         const projects = await projectsModel.find({creatorId: user.user})
         return response.status(200).send({message:'Projeto Removido com Sucesso!', projectsArray: projects})

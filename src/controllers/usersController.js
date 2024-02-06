@@ -42,17 +42,6 @@ const register = async (request, response) => {
         return response.status(400).send({error: "E-mail já consta na base de dados!"})
     }
 
-    //Verifica se a imagem - Removi pois nao tem imagem no cadastro
-    // if (!(/image\//g).test(profileImage)){
-    //     return response.status(400).send({error: "Imagem inválida!"})
-    // }
-    // if(profileImage && (/image\//g).test(profileImage)){
-    //     const fileLength = Buffer.from(profileImage, 'base64').length;
-    //     if(fileLength/1024 > 102400){
-    //         return response.status(400).send({error: "Imagem inválida!"})
-    //     }
-    // }
-
     //cria o hash da senha
     const hash = bcrypt.hashSync(password, saltRounds)
     const user = {

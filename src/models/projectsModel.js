@@ -11,10 +11,10 @@ const projectSchema = new Schema({
         type: String,
         required: true,
     },
-    tag: {
+    tag: { //tag:[String]
         type: String,
         required: true,
-    },
+    }, //creatorName - Adicao para a tela de Descorbrir
     creatorId: {
         type: String,
     },
@@ -29,7 +29,7 @@ const projectSchema = new Schema({
     image: {
         type: String,
         default: 'image'
-    }, //Precisa ser redefinido
+    },
     createdAt: {
         type: Date,
         default: Date.now(),
