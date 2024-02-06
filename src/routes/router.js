@@ -13,8 +13,6 @@ router.get('/another-projects', authMiddleware, projectsController.getAnotherUse
 
 router.post('/projects', authMiddleware, projectsController.create)
 
-router.get('/projects/:id', authMiddleware, projectsController.getOne)
-
 router.put('/projects/:id', authMiddleware, projectsController.update)
 
 router.delete('/projects/:id', authMiddleware, projectsController.remove)

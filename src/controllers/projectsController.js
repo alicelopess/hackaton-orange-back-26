@@ -153,7 +153,6 @@ export default {
     create,
     getUserProjects,
     getAnotherUserProjects,
-    getOne,
     update,
     remove
 }
