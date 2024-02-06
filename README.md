@@ -22,6 +22,3 @@ Este é o repositório do back-end para a aplicação Orange Portfólio, respons
 - Axios
 - Swagger
 
-## Contribuidores
-
-[![Contribuidor 1](https://contributors-img.web.app/image?repo=alicelopess/hackaton-orange-back-26)](https://github.com/alicelopess)
