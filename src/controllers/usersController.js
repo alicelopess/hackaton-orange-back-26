@@ -49,7 +49,7 @@ const register = async (request, response) => {
         firstName,
         lastName,
         email,
-        profileImage,
+        // profileImage,
         password: hash
     }
     try {
