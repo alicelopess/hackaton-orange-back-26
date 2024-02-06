@@ -41,15 +41,7 @@ const create = async (request, response) => {
     if(title.length > 50 || tag.length > 2 || tag[0].length > 20 || tag[1].length > 20 || link.length > 2083 || description.length > 200 ){
         return response.status(400).send("Dados inválidos!")        
     }
-     if (!(/image\//g).test(image)){
-         return response.status(400).send({error: "Imagem inválida!"})
-     }
-     if(image && (/image\//g).test(image)){
-         const fileLength = Buffer.from(image, 'base64').length;
-         if(fileLength/1024 > 102400){
-             return response.status(400).send({error: "Imagem inválida!"})
-         }
-     }
+
     const authorizationHeader = request.headers['authorization']
     const token = authorizationHeader.split(" ")[1]
     const userIdLogged = getIdFromToken(token)
