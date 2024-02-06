@@ -4,7 +4,7 @@
 
 ## Descrição
 
-Este é o repositório do back-end para a aplicação Orange Portfólio, responsável por gerenciar a autenticação, cadastro de usuários, e interação com o banco de dados MongoDB.
+Este é o repositório do back-end para a aplicação Orange Portfólio, responsável por gerenciar a autenticação, cadastro de usuários e interação com o banco de dados MongoDB.
 
 ## Funcionalidades
 
@@ -14,16 +14,13 @@ Este é o repositório do back-end para a aplicação Orange Portfólio, respons
 
 - **Integração Frontend e Backend:** O backend está integrado ao frontend da aplicação para garantir uma experiência contínua para os usuários.
 
-## Configuração e Instalação
-
-Certifique-se de ter o Node.js e o MongoDB instalados em sua máquina. Clone o repositório e execute os seguintes comandos:
-
 ## Tecnologias Utilizadas
 
 - Node.js
 - Express
 - MongoDB
 - Axios
+- Swagger
 
 ## Contribuidores
 
